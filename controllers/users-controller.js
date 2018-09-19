@@ -29,6 +29,18 @@ class User{
             res.status(401).json({ msg: err })
         })
     }
+    static FindUser( req, res ){
+        Users.findOne({
+            userId: req.params.uid
+        })
+        // .populate('favourites')
+        .then( user=>{
+            res.status(201).json(user)
+        })
+        .catch( err =>{
+            res.status(401).json({ msg: err })            
+        })
+    }
 }
 
 module.exports = User
