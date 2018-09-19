@@ -11,8 +11,8 @@ const schemaUser = new Schema({
     userId:{
         type: String
     },
-    favorites: [{
-        type: Schema.Types.ObjectId, ref: 'Favorite'
+    favourites: [{
+        type: Schema.Types.ObjectId, ref: 'Favourite'
     }]
 },{
     timestamps:
