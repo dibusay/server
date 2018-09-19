@@ -1,4 +1,5 @@
 const Favourite = require('../models/Favourites')
+const User = require('../models/User')
 
 const getAll = function(req, res) {
   Favourite.find({})
@@ -93,7 +94,7 @@ const removeFromUser = function(req, res) {
   User.findOneAndUpdate({
     uuid: uuid
   }, {
-    $pull: { favourite: id }
+    $pull: { favourites: id }
   }, {
     new: true
   })
