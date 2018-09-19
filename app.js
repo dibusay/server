@@ -4,11 +4,30 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var cors = require('cors');
+var app = express();
+require("dotenv").config();
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var favouritesRouter = require('./routes/favourites');
+var recipesRouter = require('./routes/recipes');
 
-var app = express();
+if(!process.env.NODE_ENV){
+  process.env.NODE_ENV = 'development'
+}
+
+const DB_URL = {
+development: process.env.DEV_DB,
+test: process.env.TEST_DB
+};
+
+mongoose.connect(DB_URL[process.env.NODE_ENV], { useNewUrlParser: true })
+
+const db = mongoose.connection;
+db.on("error", console.error.bind(console, "connection error:"));
+db.once("open", function() {
+console.log("connection to mongoose success");
+});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -23,6 +42,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/favourites', favouritesRouter);
+app.use('/recipes', recipesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
