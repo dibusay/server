@@ -50,7 +50,7 @@ describe("Users",function(){
                 res.body.userName.should.be.a('string')
                 res.body.email.should.be.a('string')
                 res.body.userId.should.be.a('string')
-                res.body.favorites.should.be.a('array')
+                res.body.favourites.should.be.a('array')
 
                 res.should.have.status(201)
                 done()

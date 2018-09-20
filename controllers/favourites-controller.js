@@ -106,7 +106,7 @@ const removeFromUser = function(req, res) {
   .then(updated => {
     res.status(200).json({
       msg: 'Favourite removed from user',
-      updated
+      updatedData: updated
     })
   })
   .catch(err => {
