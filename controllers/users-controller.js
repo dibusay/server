@@ -30,10 +30,11 @@ class User{
         })
     }
     static FindUser( req, res ){
+        console.log(req.params.uid)
         Users.findOne({
             userId: req.params.uid
         })
-        // .populate('favourites')
+        .populate('favourites')
         .then( user=>{
             res.status(201).json(user)
         })
