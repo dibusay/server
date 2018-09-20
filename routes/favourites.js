@@ -12,7 +12,7 @@ router
   .get(getById)
 
 router
-  .route('/user/:id')
+  .route('/:id')
   .delete(removeFromUser)
 
 module.exports = router;
