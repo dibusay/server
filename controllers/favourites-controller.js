@@ -4,13 +4,13 @@ const User = require('../models/User')
 const getAll = function(req, res) {
   Favourite.find({})
   .then(favourites => {
-    res.send(200).json({
+    res.status(200).json({
       msg: 'Get all favourites',
       favourites
     })
   })
   .catch(err => {
-    res.send(400).json({
+    res.status(400).json({
       msg: 'Failed to get all favourites',
       error: err
     })
@@ -21,29 +21,33 @@ const getById = function(req, res) {
   const { id } = req.params
   Favourite.find({ _id: id })
   .then(favourite => {
-    res.send(200).json({
+    res.status(200).json({
       msg: 'Get a favourite',
       favourite
     })
   })
   .catch(err => {
-    res.send(400).json({
+    res.status(400).json({
       msg: 'Failed to get a favourite',
       error: err
     })
   })
 }
 
-const create = function(req, res) {
+const addToUser = function(req, res) {
   const {
-    label, image, ingredientLines, calories, totalTime, uuid
+    label, image, ingredientLines, calories, totalTime, uid
   } = req.body
 
-  Favourite.findOne({ label, image })
+  const search = { label: label }
+  if (image) search.image = image
+
+  Favourite.findOne(search)
   .then(foundItem => {
     if (foundItem) {
+      console.log('found', foundItem)
       User.findOneAndUpdate({
-        uuid: uuid
+        userId: uid
       }, {
         $push: { favourites: foundItem._id }
       }, {
@@ -58,14 +62,15 @@ const create = function(req, res) {
       })
     }
     else {
+      console.log('create new collection')
       Favourite.create({
         label, image, ingredientLines, calories, totalTime
       })
       .then(favourite => {
-        User.findOneAndUpdate({ 
-          uuid: uuid
+        User.findOneAndUpdate({
+          userId: uid
         }, {
-          $push: { favourites: foundItem._id }
+          $push: { favourites: favourite._id }
         }, {
           new: true
         })
@@ -80,7 +85,7 @@ const create = function(req, res) {
     }
   })
   .catch(err => {
-    res.send(400).json({
+    res.status(400).json({
       msg: 'Error add favourites',
       error: err
     })
@@ -88,11 +93,11 @@ const create = function(req, res) {
 }
 
 const removeFromUser = function(req, res) {
-  let { uuid } = req.body
+  let { uid } = req.body
   let { id } = req.params
 
   User.findOneAndUpdate({
-    uuid: uuid
+    userId: uid
   }, {
     $pull: { favourites: id }
   }, {
@@ -130,5 +135,5 @@ const remove = function(req, res) {
 }
 
 module.exports = {
-  getAll, getById, create, removeFromUser, remove
+  getAll, getById, addToUser, removeFromUser, remove
 }

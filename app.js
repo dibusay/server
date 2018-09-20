@@ -12,7 +12,7 @@ var mongoose = require('mongoose')
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var favouritesRouter = require('./routes/favourites');
-// var recipesRouter = require('./routes/recipes');
+var recipesRouter = require('./routes/recipes');
 
 if(!process.env.NODE_ENV){
   process.env.NODE_ENV = 'development'
@@ -45,7 +45,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/favourites', favouritesRouter);
-// app.use('/recipes', recipesRouter);
+app.use('/recipes', recipesRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

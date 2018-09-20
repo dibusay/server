@@ -6,7 +6,8 @@ const should = chai.should()
 chai.use(chaiHttp)
 
 describe('Favourites', function() {
-  it('should add favourite on /favourites POST', function(done) {
+  it('should add a favourite to User /favourites POST', function(done) {
+    this.timeout(2000)
     chai.request(server)
       .post('/favourites')
       .send({
@@ -22,16 +23,15 @@ describe('Favourites', function() {
         ],
         calories: 1402.0965064000002,
         totalTime: 137.0,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        uid: 23456
       })
       .end(function(err, res) {
         if (err) throw new Error(err)
         res.should.have.status(200)
         res.should.be.a('object')
-        // res.body.should.have.property('msg')
-        // res.body.should.have.property('favourite')
-        // res.body.favourite.should.be.a('object')
+        res.body.should.have.property('msg')
+        res.body.should.have.property('favourite')
+        res.body.favourite.should.be.a('object')
         // res.body.favourite.should.have.property('_id')
         // res.body.favourite.should.have.property('label')
         // res.body.favourite.should.have.property('image')
@@ -68,7 +68,7 @@ describe('Favourites', function() {
 
   it('should get a single favourite on /favourites/:id GET', function(done) {
     chai.request(server)
-      .get('/favourites/'+'0942tum90aowuhg2')
+      .get('/favourites/'+'5ba2f4a219a2ad28b41004a7')
       .end(function(err, res) {
         if (err) throw new Error(err)
         res.should.have.status(200);
@@ -88,14 +88,37 @@ describe('Favourites', function() {
   })
 
   it('should delete favourite on /favourites/:id DELETE', function(done) {
+    this.timeout(2000)
     chai.request(server)
-      .delete('/favourites/'+'0942tum90aowuhg2')
+      .delete('/favourites/'+'5ba2f4a219a2ad28b41004a7')
+      .send({uid: 12345})
       .end(function(err, res) {
         if (err) throw new Error(err)
         res.should.have.status(200)
-        // res.should.be.a('object')
+        res.should.be.a('object')
         // res.body.should.have.property('msg')
         // res.body.should.have.property('favourite')
+        done()
+      })
+  })
+
+  it('should FAIL to get a single favourite on /favourites/:id GET', function(done) {
+    this.timeout(4000)
+    chai.request(server)
+      .get('/favourites/'+'0942tum90aowuhg2')
+      .end(function(err, res) {
+        if (err) throw new Error(err)
+        res.should.have.status(400);
+        res.should.be.a('object')
+        res.body.should.have.property('msg')
+        // res.body.favourite.should.have.property('_id')
+        // res.body.favourite.should.have.property('label')
+        // res.body.favourite.should.have.property('image')
+        // res.body.favourite.should.have.property('ingredientLines')
+        // res.body.favourite.should.have.property('calories')
+        // res.body.favourite.should.have.property('totalTime')
+        // res.body.favourite.should.have.property('createdAt')
+        // res.body.favourite.should.have.property('updatedAt')
         done()
       })
   })
