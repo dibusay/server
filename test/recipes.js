@@ -15,7 +15,7 @@ describe('Recipes', function(){
                 res.body.should.be.a('object');
                 res.body.hits.should.be.a('array');
                 res.body.hits.length.should.be.equal(10);
-                res.body.should.have.property('hits');
+                res.body.should.have.property('recipes');
                 done();
             })
     })
