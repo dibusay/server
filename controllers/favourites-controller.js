@@ -34,6 +34,12 @@ const getById = function(req, res) {
   })
 }
 
+const getOne = function(req, res) {
+  Favourite.find({
+    label, image
+  })
+}
+
 const addToUser = function(req, res) {
   const {
     label, image, ingredientLines, calories, totalTime, uid
@@ -46,20 +52,45 @@ const addToUser = function(req, res) {
   .then(foundItem => {
     if (foundItem) {
       console.log('found', foundItem)
-      User.findOneAndUpdate({
+      // check if it's already in the user favourites array
+      User.findOne({
         userId: uid
-      }, {
-        $push: { favourites: foundItem._id }
-      }, {
-        new: true
       })
-      .then(updated => {
-        console.log(updated)
-        res.status(200).json({
-          msg: 'Favourite found and added to user favourites',
-          favourite: foundItem
+      .then(found => {
+        let favArr = found.favourites
+        // if yes,
+        if (favArr.indexOf(foundItem._id) !== -1) {
+          return res.status(400).json({
+            msg: 'You cannot add the same item',
+          })
+        }
+        // else if it doesn't exist
+        User.findOneAndUpdate({
+          userId: uid
+        }, {
+          $push: { favourites: foundItem._id }
+        }, {
+          new: true
+        })
+        .populate('favourites')
+        .then(updated => {
+          console.log(updated)
+          res.status(200).json({
+            msg: 'Favourite found and added to user favourites',
+            favourite: updated
+          })
+        })
+        .catch(err => {
+          res.status(400).json({
+            msg: 'error add favourites',
+            error: err
+          })
         })
       })
+      .catch(err => {
+        console.log('error',err)
+      })
+
     }
     else {
       console.log('create new collection')
@@ -74,11 +105,12 @@ const addToUser = function(req, res) {
         }, {
           new: true
         })
+        .populate('favourites')
         .then(updated => {
           console.log(updated)
           res.status(200).json({
             msg: 'Favourite created and added to user favourites',
-            favourite
+            favourite: updated
           })
         })
       })
@@ -103,10 +135,11 @@ const removeFromUser = function(req, res) {
   }, {
     new: true
   })
+  .populate('favourites')
   .then(updated => {
     res.status(200).json({
       msg: 'Favourite removed from user',
-      updatedData: updated
+      favourite: updated
     })
   })
   .catch(err => {
