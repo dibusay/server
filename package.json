@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
+    "dev": "NODE_ENV=test nodemon ./bin/www",
     "test": "NODE_ENV=test nyc mocha"
   },
   "dependencies": {
