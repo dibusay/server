@@ -8,7 +8,9 @@ const fs = require('fs')
 // - Get image filename (DONE)
 // - Upload to Rekognition (DONE)
 // - Generate food type by face emotion
-// -
+// - Search Edamam API for recipe
+// - res.send data from recipe API
+
 const faceEmotions = function(req, res) {
 
     AWS.config.loadFromPath('./awsconfig.json') //TODO setting credentials access key and secret key
