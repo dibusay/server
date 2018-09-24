@@ -3,7 +3,8 @@ const Schema = mongoose.Schema
 
 const schemaUser = new Schema({
     userName:{
-        type: String
+        type: String,
+        required: [true, "username is require"]
     },
     email:{
         type: String
