@@ -46,7 +46,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/favourites', favouritesRouter);
 app.use('/recipes', recipesRouter);
-app.use('/face', require('./routes/rekognition-route'))
+app.use('/mood', require('./routes/rekognition-route'))
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
