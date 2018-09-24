@@ -9,12 +9,12 @@ const getAll = function(req, res) {
       favourites
     })
   })
-  .catch(err => {
-    res.status(400).json({
-      msg: 'Failed to get all favourites',
-      error: err
-    })
-  })
+  // .catch(err => {
+  //   res.status(400).json({
+  //     msg: 'Failed to get all favourites',
+  //     error: err
+  //   })
+  // })
 }
 
 const getById = function(req, res) {
@@ -34,11 +34,11 @@ const getById = function(req, res) {
   })
 }
 
-const getOne = function(req, res) {
-  Favourite.find({
-    label, image
-  })
-}
+// const getOne = function(req, res) {
+//   Favourite.find({
+//     label, image
+//   })
+// }
 
 const addToUser = function(req, res) {
   const {
@@ -51,8 +51,6 @@ const addToUser = function(req, res) {
   Favourite.findOne(search)
   .then(foundItem => {
     if (foundItem) {
-      console.log('found', foundItem)
-      // check if it's already in the user favourites array
       User.findOne({
         userId: uid
       })
@@ -66,7 +64,8 @@ const addToUser = function(req, res) {
         }
         // else if it doesn't exist
         User.findOneAndUpdate({
-          userId: uid
+          userId: uid,
+          
         }, {
           $push: { favourites: foundItem._id }
         }, {
@@ -74,21 +73,24 @@ const addToUser = function(req, res) {
         })
         .populate('favourites')
         .then(updated => {
-          console.log(updated)
+          // console.log(updated)
           res.status(200).json({
             msg: 'Favourite found and added to user favourites',
             favourite: updated
           })
         })
-        .catch(err => {
-          res.status(400).json({
-            msg: 'error add favourites',
-            error: err
-          })
-        })
+        // .catch(err => {
+        //   res.status(400).json({
+        //     msg: 'error add favourites',
+        //     error: err
+        //   })
+        // })
       })
       .catch(err => {
-        console.log('error',err)
+        res.status(400).json({
+          msg: 'error add favourites',
+          error: err
+        })
       })
 
     }
@@ -107,13 +109,28 @@ const addToUser = function(req, res) {
         })
         .populate('favourites')
         .then(updated => {
-          console.log(updated)
-          res.status(200).json({
-            msg: 'Favourite created and added to user favourites',
-            favourite: updated
+          // console.log(updated)
+          if(updated===null){
+            res.status(400).json({
+              msg: 'Failed to add a favourite to user',
+              error: err
+            })
+          }
+          else{
+            res.status(200).json({
+              msg: 'Favourite created and added to user favourites',
+              favourite: updated
+            })
+          }
+        })
+        .catch(err=>{
+          res.status(400).json({
+            msg: 'Failed to add a favourite to user',
+            error: err
           })
         })
       })
+      // .catch(err)
     }
   })
   .catch(err => {
@@ -150,23 +167,23 @@ const removeFromUser = function(req, res) {
   })
 }
 
-const remove = function(req, res) {
-  let { id } = req.params
-  Favourite.findOneAndRemove({ _id: id })
-  .then(removed => {
-    res.status(200).json({
-      msg: 'Favourite removed from collection',
-      removed
-    })
-  })
-  .catch(err => {
-    res.status(400).json({
-      msg: 'Error removing favourite from DB',
-      error: err
-    })
-  })
-}
+// const remove = function(req, res) {
+//   let { id } = req.params
+//   Favourite.findOneAndRemove({ _id: id })
+//   .then(removed => {
+//     res.status(200).json({
+//       msg: 'Favourite removed from collection',
+//       removed
+//     })
+//   })
+//   .catch(err => {
+//     res.status(400).json({
+//       msg: 'Error removing favourite from DB',
+//       error: err
+//     })
+//   })
+// }
 
 module.exports = {
-  getAll, getById, addToUser, removeFromUser, remove
+  getAll, getById, addToUser, removeFromUser
 }

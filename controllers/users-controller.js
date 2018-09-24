@@ -25,9 +25,6 @@ class User{
                 })
             }
         })
-        .catch(err=>{
-            res.status(401).json({ msg: err })
-        })
     }
     static FindUser( req, res ){
         console.log(req.params.uid)
@@ -36,7 +33,12 @@ class User{
         })
         .populate('favourites')
         .then( user=>{
-            res.status(201).json(user)
+            if(user){
+                res.status(201).json(user)
+            }
+            else{
+                res.status(401).json({ msg: err })            
+            }
         })
         .catch( err =>{
             res.status(401).json({ msg: err })            
