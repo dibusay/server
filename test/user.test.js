@@ -2,9 +2,9 @@ var chai = require('chai');
 var chaiHttp = require('chai-http');
 var should = chai.should();
 var server = require('../app')
+let User = require('../models/User')
 
 chai.use(chaiHttp)
-
 
 describe("Users",function(){
     it('should get a user on /users',function(done){
