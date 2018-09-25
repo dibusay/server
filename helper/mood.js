@@ -1,26 +1,27 @@
-const foodFormood = {   "HAPPY" : ["chamomile","chocolate","tea","onion","corn"] ,
-                        "SAD" : ["chocolate","avocado","milk","cereal","almond","cheese","salmon"],
-                        "ANGRY" : ["green tea","popcorn","peanut", "barley","daikon"],
-                        "CONFUSED" : ["barley","lentils","white beans","wheat","daikon"],
-                        "DISGUSTED" : ["millet","sweet rice","garbanzo","aduki beans","sweet squash"],
-                        "SURPRISED" : ["aduki beans", "black beans", "buckwheat","salad"],
-                        "CALM" : ["miso soup", "aduki beans", "black beans", "buckwheat", "soba noodles", "winter squash"],
-                        "UNKNOWN" : [ "chamomile","chocolate","tea","onion","corn", "avocado","milk","cereal","almond",
-                                    "cheese","salmon","green tea","popcorn","peanut", "barley","daikon","lentils",
-                                    "white beans","wheat","millet","sweet rice","garbanzo","aduki beans","sweet squash"
-                                ]            
-                    }
-// const axios = require('axios')
+const AWS = require('aws-sdk')
+AWS.config.loadFromPath('./awsconfig.json') //TODO setting credentials access key and secret key
+AWS.config.update({region: 'eu-west-1'});
+
+var machinelearning = new AWS.MachineLearning({apiVersion:'2014-12-12'})
 
 function findFoodbyMood(mood){
-    var resultFood = "rice"
-    for(var key in foodFormood){
-        if(mood===key||mood.toUpperCase()===key){
-            var combine = Math.floor(Math.random()*foodFormood[key].length)
-            resultFood = foodFormood[key][combine]
-        }
-    }
-    return(resultFood)
+    var params = {
+        MLModelId: 'ml-MOO9bBv5CHZ' /* required */
+    };
+    console.log('masuk sini')
+    machinelearning.createRealtimeEndpoint(params, function(err, data) {
+        console.log('================ masuk create ====================')
+        if (err){
+            console.log(err, err.stack); // an error occurred
+        } else{
+            console.log(data);           // successful response
+            return(data)
+        }   
+        
+    });
+
 }
+
+
 
 module.exports = findFoodbyMood
