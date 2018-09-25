@@ -3,8 +3,8 @@ const uuid = require('uuid/v1')
 const axios = require('axios')
 const findFoodByMood = require('../helper/mood.js')
 // const apiURL = 'http://localhost:3000'
-const fs = require('fs')
-let image = fs.readFileSync('./desktop-loop-poster.jpg','base64')
+// const fs = require('fs')
+// let image = fs.readFileSync('./person2.jpeg','base64')
 
 // const fetch = require('node-fetch')
 
@@ -28,11 +28,11 @@ const faceEmotions = function(req, res) {
     let randomFileName = uuid()
 
     // let image = req.body.image
-    // let base64img = req.body.base64
-    let base64img = image
+    let base64img = req.body.base64
+    // let base64img = image
 
     let base64data = new Buffer(base64img, 'base64')
-    console.log('base64data', base64data)
+    // console.log('base64data', base64data)
 
     // let imageUri = 'data:image/png;base64,' + req.body.base64
     var s3 = new AWS.S3()
@@ -65,47 +65,50 @@ const faceEmotions = function(req, res) {
                 const emotion = data.FaceDetails[0].Emotions[0].Type
                 const age = data.FaceDetails[0].AgeRange.Low
                 const gender = data.FaceDetails[0].Gender.Value
-                let foodType = findFoodByMood({ emotion, age, gender })
-                console.log('food type',foodType)
-                
-
-                // Search Recipe API
-                // axios({
-                //     method: 'get',
-                //     url: `https://api.edamam.com/search?q=${foodType}&app_id=7f184b7a&app_key=a66fc2e336697a82fe7c32f769dc3291`
-                // })
-                // .then(({ data }) => {
-                //     console.log('success get recipes',data)
-
-                //     let hits = data.hits
-                //     let recipes = []
-                //     let recipe = {}
-                
-                //     for(let hit of hits) {
-                //         recipe.uri = hit.recipe.uri,
-                //         recipe.label = hit.recipe.label,
-                //         recipe.image = hit.recipe.image,
-                //         recipe.ingredientLines = hit.recipe.ingredientLines,
-                //         recipe.calories = hit.recipe.calories,
-                //         recipe.totalTime = hit.recipe.totalTime
-                //         recipes.push(recipe)
-                //         recipe = {}
-                //     }
-
-                //     // Send emotions, foodtype, and recipes
-                //     res.status(200).json({
-                //         msg: 'successfully get recipes',
-                //         recipes,
-                //         mood: emotion.toLowerCase(),
-                //         foodType
-                //     })
-                // })
-                // .catch((err) => {
-                //     console.log('error get recipes',response)
-                //     res.status(500).json({
-                //         msg: err.message
-                //     })
-                // })
+                console.log("result emotion",emotion,age,gender);
+                findFoodByMood({ emotion, age, gender },function(result){
+                    console.log('food type',result.Prediction.predictedLabel)
+                    // Search Recipe API
+                    var food = result.Prediction.predictedLabel
+                    axios({
+                        method: 'get',
+                        url: `https://api.edamam.com/search?q=${food}&app_id=7f184b7a&app_key=a66fc2e336697a82fe7c32f769dc3291`
+                    })
+                    .then(({ data }) => {
+                        console.log('success get recipes',data)
+    
+                        let hits = data.hits
+                        let recipes = []
+                        let recipe = {}
+                    
+                        for(let hit of hits) {
+                            recipe.uri = hit.recipe.uri,
+                            recipe.label = hit.recipe.label,
+                            recipe.image = hit.recipe.image,
+                            recipe.ingredientLines = hit.recipe.ingredientLines,
+                            recipe.calories = hit.recipe.calories,
+                            recipe.totalTime = hit.recipe.totalTime
+                            recipes.push(recipe)
+                            recipe = {}
+                        }
+    
+                        // Send emotions, foodtype, and recipes
+                        res.status(200).json({
+                            msg: 'successfully get recipes',
+                            recipes,
+                            mood: emotion.toLowerCase(),
+                            food,
+                            age,
+                            gender
+                        })
+                    })
+                    .catch((err) => {
+                        console.log('error get recipes',response)
+                        res.status(500).json({
+                            msg: err.message
+                        })
+                    })
+                })
             }
         });
     })
