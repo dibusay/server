@@ -3,7 +3,8 @@ const uuid = require('uuid/v1')
 const axios = require('axios')
 const findFoodByMood = require('../helper/mood.js')
 // const apiURL = 'http://localhost:3000'
-const fs = require('fs')
+// const fs = require('fs')
+// const fetch = require('node-fetch')
 
 // TODO: add S3 processing here
 // - Get image from client vie req.body
@@ -21,16 +22,20 @@ const faceEmotions = function(req, res) {
     var rekognition = new AWS.Rekognition();
     var BUCKET = "masakyuk-rekognition" //TODO => create bucket in s3
     let randomFileName = uuid()
-    
-    let base64data = req.body.image
-    // let base64data = req.body.base64
-    // let base64data = new Buffer(data, 'binary')
+
+    // let image = req.body.image
+    let base64img = req.body.base64
+    let base64data = new Buffer(base64img, 'base64')
     console.log('base64data', base64data)
+
+    // let imageUri = 'data:image/png;base64,' + req.body.base64
     var s3 = new AWS.S3()
     s3.putObject({
         Bucket: BUCKET,
-        Key: `${randomFileName}.jpg`,
+        Key: `${randomFileName}`,
         Body: base64data, // base64data
+        ContentEncoding: 'base64',
+        ContentType: 'image/png'
     }, function (err, response) {
         if (err) throw err
         console.log('S3 response',response) // -> returns Etag (don't know for what)
@@ -40,7 +45,7 @@ const faceEmotions = function(req, res) {
             Image: {
                  S3Object: {
                   Bucket: BUCKET, 
-                  Name: `${randomFileName}.jpg`//TODO => get the image name in s3
+                  Name: `${randomFileName}`//TODO => get the image name in s3
                  }
             }
         }
@@ -95,12 +100,6 @@ const faceEmotions = function(req, res) {
             }
         });
     })
-
-    // fs.readFile('./assets/smiling-man.jpg', function(err, data) {
-    //     if(err) throw err
-    //     // console.log(data)
-        
-    // })
 }
 
 module.exports = {
