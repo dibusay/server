@@ -9,12 +9,12 @@ const getAll = function(req, res) {
       favourites
     })
   })
-  // .catch(err => {
-  //   res.status(400).json({
-  //     msg: 'Failed to get all favourites',
-  //     error: err
-  //   })
-  // })
+  .catch(err => {
+    res.status(400).json({
+      msg: 'Failed to get all favourites',
+      error: err
+    })
+  })
 }
 
 const getById = function(req, res) {
@@ -34,11 +34,6 @@ const getById = function(req, res) {
   })
 }
 
-// const getOne = function(req, res) {
-//   Favourite.find({
-//     label, image
-//   })
-// }
 
 const addToUser = function(req, res) {
   const {
@@ -56,13 +51,11 @@ const addToUser = function(req, res) {
       })
       .then(found => {
         let favArr = found.favourites
-        // if yes,
         if (favArr.indexOf(foundItem._id) !== -1) {
           return res.status(400).json({
             msg: 'You cannot add the same item',
           })
         }
-        // else if it doesn't exist
         User.findOneAndUpdate({
           userId: uid,
           
@@ -73,18 +66,17 @@ const addToUser = function(req, res) {
         })
         .populate('favourites')
         .then(updated => {
-          // console.log(updated)
           res.status(200).json({
             msg: 'Favourite found and added to user favourites',
             favourite: updated
           })
         })
-        // .catch(err => {
-        //   res.status(400).json({
-        //     msg: 'error add favourites',
-        //     error: err
-        //   })
-        // })
+        .catch(err => {
+          res.status(400).json({
+            msg: 'error add favourites',
+            error: err
+          })
+        })
       })
       .catch(err => {
         res.status(400).json({
@@ -109,7 +101,6 @@ const addToUser = function(req, res) {
         })
         .populate('favourites')
         .then(updated => {
-          // console.log(updated)
           if(updated===null){
             res.status(400).json({
               msg: 'Failed to add a favourite to user',
@@ -130,7 +121,6 @@ const addToUser = function(req, res) {
           })
         })
       })
-      // .catch(err)
     }
   })
   .catch(err => {
@@ -167,22 +157,6 @@ const removeFromUser = function(req, res) {
   })
 }
 
-// const remove = function(req, res) {
-//   let { id } = req.params
-//   Favourite.findOneAndRemove({ _id: id })
-//   .then(removed => {
-//     res.status(200).json({
-//       msg: 'Favourite removed from collection',
-//       removed
-//     })
-//   })
-//   .catch(err => {
-//     res.status(400).json({
-//       msg: 'Error removing favourite from DB',
-//       error: err
-//     })
-//   })
-// }
 
 module.exports = {
   getAll, getById, addToUser, removeFromUser
