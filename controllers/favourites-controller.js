@@ -1,21 +1,21 @@
 const Favourite = require('../models/Favourites')
 const User = require('../models/User')
 
-const getAll = function(req, res) {
-  Favourite.find({})
-  .then(favourites => {
-    res.status(200).json({
-      msg: 'Get all favourites',
-      favourites
-    })
-  })
-  .catch(err => {
-    res.status(400).json({
-      msg: 'Failed to get all favourites',
-      error: err
-    })
-  })
-}
+// const getAll = function(req, res) {
+//   Favourite.find({})
+//   .then(favourites => {
+//     res.status(200).json({
+//       msg: 'Get all favourites',
+//       favourites
+//     })
+//   })
+//   .catch(err => {
+//     res.status(400).json({
+//       msg: 'Failed to get all favourites',
+//       error: err
+//     })
+//   })
+// }
 
 const getById = function(req, res) {
   const { id } = req.params
@@ -73,7 +73,7 @@ const addToUser = function(req, res) {
         })
         .catch(err => {
           res.status(400).json({
-            msg: 'error add favourites',
+            msg: 'error add favourites on user',
             error: err
           })
         })
@@ -125,7 +125,7 @@ const addToUser = function(req, res) {
   })
   .catch(err => {
     res.status(400).json({
-      msg: 'Error add favourites',
+      msg: 'Error search favourites',
       error: err
     })
   })
@@ -159,5 +159,5 @@ const removeFromUser = function(req, res) {
 
 
 module.exports = {
-  getAll, getById, addToUser, removeFromUser
+ getById, addToUser, removeFromUser
 }

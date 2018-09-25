@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const { getAll, getById, addToUser, removeFromUser } = require('../controllers/favourites-controller')
+const {  getById, addToUser, removeFromUser } = require('../controllers/favourites-controller')
 
 router
   .route('/')
-  .get(getAll)
+  // .get(getAll)
   .post(addToUser)
 
 router

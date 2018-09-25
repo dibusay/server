@@ -43,7 +43,7 @@ describe("Users",function(){
             .send({
                 "userName":"rhesautomo",
                 "email":"rhesa@mail.com",
-                "userId":"1234"
+                "userId":"12345678"
             })
             .end(function(err, res){
                 res.body.should.be.a('object')
@@ -55,7 +55,7 @@ describe("Users",function(){
 
                 res.body.userName.should.equal('rhesautomo')
                 res.body.email.should.equal('rhesa@mail.com')
-                res.body.userId.should.equal('1234')
+                res.body.userId.should.equal('12345678')
 
                 res.body.userName.should.be.a('string')
                 res.body.email.should.be.a('string')
